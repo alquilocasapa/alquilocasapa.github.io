@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#667eea" />
+  <meta name="description" content="HappyFamily – Track your kids' daily activities and celebrate achievements" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="HappyFamily" />
+  <title>HappyFamily – Kids Activity Dashboard</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <!-- Bulma CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <!-- App Styles -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ══════════════════ NAVBAR ══════════════════ -->
+  <nav class="navbar is-fixed-top hf-navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item hf-brand" href="#/">
+        <span class="hf-brand-icon">👨‍👩‍👧‍👦</span>
+        <strong class="hf-brand-name">HappyFamily</strong>
+      </a>
+      <a role="button" class="navbar-burger" id="nav-burger" aria-label="menu" aria-expanded="false" data-target="nav-menu">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div id="nav-menu" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item hf-nav-link" href="#/" data-route="dashboard">
+          <span class="icon is-small"><i class="fas fa-home"></i></span>
+          <span>Dashboard</span>
+        </a>
+        <a class="navbar-item hf-nav-link" href="#/kids" data-route="kids">
+          <span class="icon is-small"><i class="fas fa-child"></i></span>
+          <span>Kids</span>
+        </a>
+        <a class="navbar-item hf-nav-link" href="#/activities" data-route="activities">
+          <span class="icon is-small"><i class="fas fa-clipboard-list"></i></span>
+          <span>Activities</span>
+        </a>
+        <a class="navbar-item hf-nav-link" href="#/timer" data-route="timer">
+          <span class="icon is-small"><i class="fas fa-stopwatch"></i></span>
+          <span>Timers</span>
+        </a>
+        <a class="navbar-item hf-nav-link" href="#/reminders" data-route="reminders">
+          <span class="icon is-small"><i class="fas fa-bell"></i></span>
+          <span>Reminders</span>
+        </a>
+        <a class="navbar-item hf-nav-link" href="#/summary" data-route="summary">
+          <span class="icon is-small"><i class="fas fa-chart-pie"></i></span>
+          <span>Summary</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════ MAIN ══════════════════ -->
+  <main class="hf-main" id="hf-main">
+    <div id="page-content"></div>
+  </main>
+
+  <!-- ══════════════════ MODAL ROOT ══════════════════ -->
+  <div id="modal-root"></div>
+
+  <!-- ══════════════════ TOAST ROOT ══════════════════ -->
+  <div id="toast-root"></div>
+
+  <!-- ══════════════════ SCRIPTS ══════════════════ -->
+  <script src="js/store.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
