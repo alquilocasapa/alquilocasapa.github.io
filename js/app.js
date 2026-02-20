@@ -5,6 +5,98 @@
 'use strict';
 
 // ╔══════════════════════════════════════════════════════╗
+// ║               INTERNATIONALIZATION (i18n)            ║
+// ╚══════════════════════════════════════════════════════╝
+
+const I18N = {
+  en: {
+    nav_dashboard:'Dashboard', nav_kids:'Kids', nav_activities:'Activities',
+    nav_timer:'Timers', nav_reminders:'Reminders', nav_summary:'Summary',
+    btn_add_kid:'Add Kid', btn_add_activity:'Add Activity',
+    btn_new_timer:'New Timer', btn_add:'Add', btn_save:'Save', btn_cancel:'Cancel',
+    btn_view_all:'View All', btn_remind:'Remind',
+    good_morning:'Good Morning', good_afternoon:'Good Afternoon', good_evening:'Good Evening',
+    today_lbl:"Today's Activities", no_acts_today:'No activities today',
+    page_kids:'Kids', page_activities:'Activities', page_timers:'Timers',
+    page_reminders:'Reminders', page_summary:'Summary',
+    all_kids:'All Kids', kids_tracked:'kids tracked', kid_tracked:'kid tracked',
+    stat_happy:'Happy (30d)', stat_sad:'Sad (30d)', stat_rate:'Happy Rate', stat_pending:'Pending Today',
+    empty_kids:'No kids yet. Add your first kid to get started!',
+    empty_activities:'No activities yet.', empty_timers:'No timers yet. Add a timer for a task!',
+    empty_reminders:'No reminders yet. Add reminders to help stay on schedule!',
+    welcome_title:'Welcome to HappyFamily!',
+    welcome_sub:"Start tracking your kids' activities and celebrate every achievement.",
+    welcome_btn:'Add Your First Kid',
+    cat_homework:'Homework', cat_reading:'Reading', cat_exercise:'Exercise',
+    cat_chores:'Chores', cat_music:'Music', cat_art:'Art',
+    cat_nutrition:'Nutrition', cat_other:'Other',
+    rec_daily:'Every Day', rec_weekdays:'Weekdays (Mon–Fri)',
+    rec_weekly:'Selected Days of Week', rec_once:'One Time Only',
+    day_sun:'Sun', day_mon:'Mon', day_tue:'Tue', day_wed:'Wed',
+    day_thu:'Thu', day_fri:'Fri', day_sat:'Sat',
+    act_wake_up:'Wake up', act_breakfast:'Breakfast', act_school:'School',
+    act_lunch:'Lunch', act_rest:'Rest', act_study:'Study',
+    act_play:'Play', act_dinner:'Dinner', act_bed:'Bed',
+  },
+  es: {
+    nav_dashboard:'Inicio', nav_kids:'Niños', nav_activities:'Actividades',
+    nav_timer:'Temporizadores', nav_reminders:'Recordatorios', nav_summary:'Resumen',
+    btn_add_kid:'Agregar Niño', btn_add_activity:'Agregar Actividad',
+    btn_new_timer:'Nuevo Temporizador', btn_add:'Agregar', btn_save:'Guardar', btn_cancel:'Cancelar',
+    btn_view_all:'Ver Todo', btn_remind:'Recordar',
+    good_morning:'¡Buenos días', good_afternoon:'¡Buenas tardes', good_evening:'¡Buenas noches',
+    today_lbl:'Actividades de Hoy', no_acts_today:'Sin actividades hoy',
+    page_kids:'Niños', page_activities:'Actividades', page_timers:'Temporizadores',
+    page_reminders:'Recordatorios', page_summary:'Resumen',
+    all_kids:'Todos los Niños', kids_tracked:'niños registrados', kid_tracked:'niño registrado',
+    stat_happy:'Feliz (30d)', stat_sad:'Triste (30d)', stat_rate:'Tasa Feliz', stat_pending:'Pendiente Hoy',
+    empty_kids:'¡Sin niños aún! Agrega tu primer niño para comenzar.',
+    empty_activities:'Sin actividades aún.', empty_timers:'Sin temporizadores aún.',
+    empty_reminders:'Sin recordatorios aún.',
+    welcome_title:'¡Bienvenido a HappyFamily!',
+    welcome_sub:'Empieza a registrar las actividades de tus niños y celebra cada logro.',
+    welcome_btn:'Agregar Primer Niño',
+    cat_homework:'Tareas', cat_reading:'Lectura', cat_exercise:'Ejercicio',
+    cat_chores:'Quehaceres', cat_music:'Música', cat_art:'Arte',
+    cat_nutrition:'Nutrición', cat_other:'Otro',
+    rec_daily:'Todos los días', rec_weekdays:'Días de semana (Lun–Vie)',
+    rec_weekly:'Días seleccionados', rec_once:'Solo una vez',
+    day_sun:'Dom', day_mon:'Lun', day_tue:'Mar', day_wed:'Mié',
+    day_thu:'Jue', day_fri:'Vie', day_sat:'Sáb',
+    act_wake_up:'Despertar', act_breakfast:'Desayuno', act_school:'Colegio',
+    act_lunch:'Almuerzo', act_rest:'Descanso', act_study:'Estudio',
+    act_play:'Jugar', act_dinner:'Cena', act_bed:'Dormir',
+  }
+};
+
+let currentLang = localStorage.getItem('hf_lang') || 'en';
+
+function t(key) {
+  return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('hf_lang', lang);
+  updateLangBtn();
+  applyI18n();
+  Router.resolve();
+}
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+}
+
+function updateLangBtn() {
+  const flag = document.getElementById('lang-flag');
+  const code = document.getElementById('lang-code');
+  if (flag) flag.textContent = currentLang === 'en' ? '🇺🇸' : '🇪🇸';
+  if (code) code.textContent = currentLang === 'en' ? 'EN' : 'ES';
+}
+
+// ╔══════════════════════════════════════════════════════╗
 // ║                    CONSTANTS                         ║
 // ╚══════════════════════════════════════════════════════╝
 
@@ -19,22 +111,24 @@ const KID_EMOJIS = [
 ];
 
 const CATEGORIES = {
-  homework:  { label: 'Homework',   icon: '📚', color: '#3298DC' },
-  reading:   { label: 'Reading',    icon: '📖', color: '#48C774' },
-  exercise:  { label: 'Exercise',   icon: '🏃', color: '#FF9F43' },
-  chores:    { label: 'Chores',     icon: '🧹', color: '#FF6584' },
-  music:     { label: 'Music',      icon: '🎵', color: '#9B59B6' },
-  art:       { label: 'Art',        icon: '🎨', color: '#E74C3C' },
-  nutrition: { label: 'Nutrition',  icon: '🥗', color: '#27AE60' },
-  other:     { label: 'Other',      icon: '⭐', color: '#95A5A6' }
+  homework:  { label: 'Homework',  labelKey: 'cat_homework',  icon: '📚', color: '#3298DC' },
+  reading:   { label: 'Reading',   labelKey: 'cat_reading',   icon: '📖', color: '#48C774' },
+  exercise:  { label: 'Exercise',  labelKey: 'cat_exercise',  icon: '🏃', color: '#FF9F43' },
+  chores:    { label: 'Chores',    labelKey: 'cat_chores',    icon: '🧹', color: '#FF6584' },
+  music:     { label: 'Music',     labelKey: 'cat_music',     icon: '🎵', color: '#9B59B6' },
+  art:       { label: 'Art',       labelKey: 'cat_art',       icon: '🎨', color: '#E74C3C' },
+  nutrition: { label: 'Nutrition', labelKey: 'cat_nutrition', icon: '🥗', color: '#27AE60' },
+  other:     { label: 'Other',     labelKey: 'cat_other',     icon: '⭐', color: '#95A5A6' }
 };
 
 const RECURRENCES = [
-  { value: 'daily',    label: 'Every Day' },
-  { value: 'weekdays', label: 'Weekdays (Mon–Fri)' },
-  { value: 'weekly',   label: 'Selected Days of Week' },
-  { value: 'once',     label: 'One Time Only' }
+  { value: 'daily',    label: 'Every Day',            labelKey: 'rec_daily' },
+  { value: 'weekdays', label: 'Weekdays (Mon–Fri)',   labelKey: 'rec_weekdays' },
+  { value: 'weekly',   label: 'Selected Days of Week',labelKey: 'rec_weekly' },
+  { value: 'once',     label: 'One Time Only',        labelKey: 'rec_once' }
 ];
+
+const DAY_KEYS = ['day_sun','day_mon','day_tue','day_wed','day_thu','day_fri','day_sat'];
 
 const DAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
@@ -60,7 +154,10 @@ function formatDate(d) {
   ].join('-');
 }
 
-function today() { return formatDate(new Date()); }
+function today() {
+  const n = new Date();
+  return `${n.getUTCFullYear()}-${String(n.getUTCMonth()+1).padStart(2,'0')}-${String(n.getUTCDate()).padStart(2,'0')}`;
+}
 
 function fmtDisplay(dateStr) {
   if (!dateStr) return '';
@@ -74,9 +171,17 @@ function fmtTime(secs) {
   return `${m}:${s}`;
 }
 
+function fmt12h(timeStr) {
+  if (!timeStr) return '';
+  const [h, m] = timeStr.split(':').map(Number);
+  const period = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return `${h12}:${String(m).padStart(2,'0')} ${period}`;
+}
+
 function fmtTimeRange(act) {
   if (!act.beginTime && !act.endTime) return '';
-  return act.beginTime + (act.endTime ? ' – ' + act.endTime : '');
+  return fmt12h(act.beginTime) + (act.endTime ? ' – ' + fmt12h(act.endTime) : '');
 }
 
 function sortByTime(acts) {
@@ -97,11 +202,16 @@ function fmtShortDate(dateStr) {
 }
 
 function greeting() {
-  const h = new Date().getHours();
-  if (h < 12) return 'Good Morning';
-  if (h < 17) return 'Good Afternoon';
-  return 'Good Evening';
+  const h = new Date().getUTCHours();
+  if (h < 12) return t('good_morning');
+  if (h < 17) return t('good_afternoon');
+  return t('good_evening');
 }
+
+// Translation helpers for domain objects
+function actTitle(act) { return act.titleKey ? t(act.titleKey) : (act.title || ''); }
+function catLabel(cat) { return cat.labelKey ? t(cat.labelKey) : cat.label; }
+function recLabel(r)   { return r ? (r.labelKey ? t(r.labelKey) : r.label) : ''; }
 
 function esc(str) {
   return String(str ?? '')
@@ -471,11 +581,11 @@ function renderDashboard() {
       <div class="hf-empty-hero">
         <div class="hf-empty-inner">
           <div class="hf-empty-emoji">👨‍👩‍👧‍👦</div>
-          <h1 class="title is-3">Welcome to HappyFamily!</h1>
-          <p class="subtitle">Start tracking your kids' activities and celebrate every achievement.</p>
+          <h1 class="title is-3">${t('welcome_title')}</h1>
+          <p class="subtitle">${t('welcome_sub')}</p>
           <button class="button is-primary is-medium" data-action="open-kid-form">
             <span class="icon"><i class="fas fa-user-plus"></i></span>
-            <span>Add Your First Kid</span>
+            <span>${t('welcome_btn')}</span>
           </button>
         </div>
       </div>`);
@@ -487,12 +597,12 @@ function renderDashboard() {
     <div class="hf-page-hero">
       <div class="hf-hero-left">
         <h1 class="hf-hero-title">${greeting()} 👋</h1>
-        <p class="hf-hero-sub">${fmtDisplay(td)} &nbsp;·&nbsp; ${kids.length} kid${kids.length !== 1 ? 's' : ''} tracked</p>
+        <p class="hf-hero-sub">${fmtDisplay(td)} &nbsp;·&nbsp; ${kids.length} ${kids.length !== 1 ? t('kids_tracked') : t('kid_tracked')}</p>
       </div>
       <div class="hf-hero-right">
         <button class="button is-white is-outlined" data-action="open-kid-form">
           <span class="icon"><i class="fas fa-user-plus"></i></span>
-          <span>Add Kid</span>
+          <span>${t('btn_add_kid')}</span>
         </button>
       </div>
     </div>
@@ -510,17 +620,17 @@ function kidDashboardCard(kid, td) {
   const actRows = todayA.length === 0
     ? `<div class="hf-no-acts">
         <i class="fas fa-clipboard-list"></i>
-        <span>No activities today</span>
+        <span>${t('no_acts_today')}</span>
         <button class="button is-small is-primary is-light mt-2"
-          data-action="open-activity-form" data-kid-id="${kid.id}">+ Add Activity</button>
+          data-action="open-activity-form" data-kid-id="${kid.id}">+ ${t('btn_add_activity')}</button>
        </div>`
     : todayA.map(a => {
         const st  = getStatus(a, td);
         const cat = CATEGORIES[a.category] || CATEGORIES.other;
         return `
         <div class="act-row act-row--${st}" data-activity-id="${a.id}">
-          <span class="act-cat-icon" title="${cat.label}">${cat.icon}</span>
-          <span class="act-title">${esc(a.title)}</span>
+          <span class="act-cat-icon" title="${catLabel(cat)}">${cat.icon}</span>
+          <span class="act-title">${esc(actTitle(a))}</span>
           ${fmtTimeRange(a) ? `<span class="act-time-badge">${fmtTimeRange(a)}</span>` : ''}
           ${a.hasTimer && a.timerId ? `
             <button class="button is-tiny is-light mr-1" data-action="quick-timer"
@@ -559,7 +669,7 @@ function kidDashboardCard(kid, td) {
       </div>
       <div class="kid-acts-wrap">
         <div class="kid-acts-label">
-          <i class="fas fa-sun"></i> Today
+          <i class="fas fa-sun"></i> ${t('today_lbl')}
           <span class="acts-count">${todayA.length}</span>
         </div>
         <div class="kid-acts-list">${actRows}</div>
@@ -567,13 +677,13 @@ function kidDashboardCard(kid, td) {
       <div class="kid-card-foot">
         <button class="button is-small is-primary is-light"
           data-action="open-activity-form" data-kid-id="${kid.id}">
-          <span class="icon"><i class="fas fa-plus"></i></span><span>Activity</span>
+          <span class="icon"><i class="fas fa-plus"></i></span><span>${t('btn_add_activity')}</span>
         </button>
         <a href="#/kids/${kid.id}" class="button is-small is-info is-light">
-          <span class="icon"><i class="fas fa-eye"></i></span><span>View All</span>
+          <span class="icon"><i class="fas fa-eye"></i></span><span>${t('btn_view_all')}</span>
         </a>
         <a href="#/reminders/${kid.id}" class="button is-small is-warning is-light">
-          <span class="icon"><i class="fas fa-bell"></i></span><span>Remind</span>
+          <span class="icon"><i class="fas fa-bell"></i></span><span>${t('btn_remind')}</span>
         </a>
       </div>
     </div>`;
@@ -611,15 +721,15 @@ function renderKids() {
 
   UI.setContent(`
     <div class="hf-page-header">
-      <h1 class="hf-page-title"><i class="fas fa-child"></i> Kids</h1>
+      <h1 class="hf-page-title"><i class="fas fa-child"></i> ${t('page_kids')}</h1>
       <button class="button is-primary" data-action="open-kid-form">
-        <span class="icon"><i class="fas fa-plus"></i></span><span>Add Kid</span>
+        <span class="icon"><i class="fas fa-plus"></i></span><span>${t('btn_add_kid')}</span>
       </button>
     </div>
     ${kids.length === 0 ? `
       <div class="hf-empty">
         <div class="hf-empty-emoji">👧👦</div>
-        <p>No kids yet. Add your first kid to get started!</p>
+        <p>${t('empty_kids')}</p>
       </div>` : `<div class="hf-list">${cards}</div>`}
   `);
 }
@@ -644,10 +754,20 @@ function renderKidDetail(kidId) {
           <p class="has-text-grey is-size-7">30-day summary: 😊 ${stats.happy} &nbsp; 😢 ${stats.sad}</p>
         </div>
       </div>
-      <button class="button is-primary ml-auto"
-        data-action="open-activity-form" data-kid-id="${kidId}">
-        <span class="icon"><i class="fas fa-plus"></i></span><span>Add Activity</span>
-      </button>
+      <div class="ml-auto buttons">
+        <button class="button is-warning is-light"
+          data-action="reset-faces" data-kid-id="${kidId}" title="Reset all faces to zero">
+          <span class="icon"><i class="fas fa-smile"></i></span><span>Reset Faces</span>
+        </button>
+        <button class="button is-info is-light"
+          data-action="reset-activities" data-kid-id="${kidId}" title="Replace activities with defaults">
+          <span class="icon"><i class="fas fa-redo"></i></span><span>Reset Activities</span>
+        </button>
+        <button class="button is-primary"
+          data-action="open-activity-form" data-kid-id="${kidId}">
+          <span class="icon"><i class="fas fa-plus"></i></span><span>Add Activity</span>
+        </button>
+      </div>
     </div>
     <div class="hf-list mt-4">
       ${acts.length === 0 ? `<div class="hf-empty"><div class="hf-empty-emoji">📋</div>
@@ -683,23 +803,23 @@ function renderActivities(filterKidId) {
 
   UI.setContent(`
     <div class="hf-page-header">
-      <h1 class="hf-page-title"><i class="fas fa-clipboard-list"></i> Activities</h1>
+      <h1 class="hf-page-title"><i class="fas fa-clipboard-list"></i> ${t('page_activities')}</h1>
       <div class="is-flex is-align-items-center gap-2">
         <div class="select is-small">
           <select id="act-kid-filter">
-            <option value="">All Kids</option>
+            <option value="">${t('all_kids')}</option>
             ${kidOptions}
           </select>
         </div>
         <button class="button is-primary is-small"
           data-action="open-activity-form"
           ${filterKidId ? `data-kid-id="${filterKidId}"` : ''}>
-          <span class="icon"><i class="fas fa-plus"></i></span><span>Add</span>
+          <span class="icon"><i class="fas fa-plus"></i></span><span>${t('btn_add')}</span>
         </button>
       </div>
     </div>
-    ${kids.length === 0 ? `<div class="hf-empty"><p>Add a kid first before creating activities.</p></div>` :
-      acts.length === 0 ? `<div class="hf-empty"><div class="hf-empty-emoji">📋</div><p>No activities yet.</p></div>` :
+    ${kids.length === 0 ? `<div class="hf-empty"><p>${t('empty_kids')}</p></div>` :
+      acts.length === 0 ? `<div class="hf-empty"><div class="hf-empty-emoji">📋</div><p>${t('empty_activities')}</p></div>` :
       `<div class="hf-list">${rows}</div>`}
   `);
 
@@ -734,7 +854,7 @@ function activityRow(act, td, kid) {
         <span class="act-big-icon">${cat.icon}</span>
         <div class="act-card-meta">
           <div class="act-card-title-row">
-            <strong>${esc(act.title)}</strong>
+            <strong>${esc(actTitle(act))}</strong>
             ${kid ? `<span class="kid-chip" style="background:${kColor}20;color:${kColor}">
               ${kEmoji} ${esc(kid.name)}</span>` : ''}
           </div>
@@ -744,7 +864,7 @@ function activityRow(act, td, kid) {
                 ? ' → ' + fmtShortDate(act.endDate) : ''}</span>
             ${fmtTimeRange(act) ? `<span title="Activity time"><i class="fas fa-clock"></i>
               ${fmtTimeRange(act)}</span>` : ''}
-            <span title="Recurrence"><i class="fas fa-redo"></i> ${rec ? rec.label : act.recurrence}</span>
+            <span title="Recurrence"><i class="fas fa-redo"></i> ${rec ? recLabel(rec) : act.recurrence}</span>
             ${act.hasTimer ? `<span title="Has timer"><i class="fas fa-stopwatch"></i>
               ${fmtTime(act.timerDuration || 0)}</span>` : ''}
           </div>
@@ -828,15 +948,15 @@ function renderTimers() {
 
   UI.setContent(`
     <div class="hf-page-header">
-      <h1 class="hf-page-title"><i class="fas fa-stopwatch"></i> Timers</h1>
+      <h1 class="hf-page-title"><i class="fas fa-stopwatch"></i> ${t('page_timers')}</h1>
       <button class="button is-primary" data-action="open-timer-form">
-        <span class="icon"><i class="fas fa-plus"></i></span><span>New Timer</span>
+        <span class="icon"><i class="fas fa-plus"></i></span><span>${t('btn_new_timer')}</span>
       </button>
     </div>
     ${timers.length === 0 ? `
       <div class="hf-empty">
         <div class="hf-empty-emoji">⏱️</div>
-        <p>No timers yet. Add a timer for a task that needs tracking!</p>
+        <p>${t('empty_timers')}</p>
       </div>` : `<div class="hf-timer-grid">${cards}</div>`}
   `);
 }
@@ -859,9 +979,9 @@ function renderReminders(filterKidId) {
   const rows = rems.map(r => {
     const kid = kidById(r.kidId);
     const kColor = kid ? kid.color : '#95A5A6';
-    const typeLabel = r.type === 'once' ? 'One Time'
-      : r.type === 'daily' ? 'Daily'
-      : r.type === 'weekly' ? `Weekly (${(r.weekDays||[]).map(d=>DAY_SHORT[d]).join(', ')})`
+    const typeLabel = r.type === 'once' ? t('rec_once')
+      : r.type === 'daily' ? t('rec_daily')
+      : r.type === 'weekly' ? `${t('rec_weekly')} (${(r.weekDays||[]).map(d=>t(DAY_KEYS[d])).join(', ')})`
       : r.type;
     const timeLabel = r.type === 'once' ? `${r.date} at ${r.time}` : `at ${r.time}`;
 
@@ -895,18 +1015,18 @@ function renderReminders(filterKidId) {
 
   UI.setContent(`
     <div class="hf-page-header">
-      <h1 class="hf-page-title"><i class="fas fa-bell"></i> Reminders</h1>
+      <h1 class="hf-page-title"><i class="fas fa-bell"></i> ${t('page_reminders')}</h1>
       <div class="is-flex is-align-items-center gap-2">
         <div class="select is-small">
           <select id="rem-kid-filter">
-            <option value="">All Kids</option>
+            <option value="">${t('all_kids')}</option>
             ${kidOptions}
           </select>
         </div>
         <button class="button is-primary is-small"
           data-action="open-reminder-form"
           ${filterKidId ? `data-kid-id="${filterKidId}"` : ''}>
-          <span class="icon"><i class="fas fa-plus"></i></span><span>Add</span>
+          <span class="icon"><i class="fas fa-plus"></i></span><span>${t('btn_add')}</span>
         </button>
       </div>
     </div>
@@ -917,9 +1037,9 @@ function renderReminders(filterKidId) {
         <button class="button is-small is-warning ml-3" id="btn-notif-perm">Enable Notifications</button>
       </div>
     </div>
-    ${kids.length === 0 ? `<div class="hf-empty"><p>Add a kid first.</p></div>` :
+    ${kids.length === 0 ? `<div class="hf-empty"><p>${t('empty_kids')}</p></div>` :
       rems.length === 0 ? `<div class="hf-empty"><div class="hf-empty-emoji">🔔</div>
-        <p>No reminders yet. Add reminders to help your kids stay on schedule!</p></div>` :
+        <p>${t('empty_reminders')}</p></div>` :
       `<div class="hf-list">${rows}</div>`}
   `);
 
@@ -976,7 +1096,7 @@ function renderSummary(filterKidId) {
 
   UI.setContent(`
     <div class="hf-page-header">
-      <h1 class="hf-page-title"><i class="fas fa-chart-pie"></i> Summary</h1>
+      <h1 class="hf-page-title"><i class="fas fa-chart-pie"></i> ${t('page_summary')}</h1>
     </div>
     <div class="hf-kid-tabs">${kidTabs}</div>
 
@@ -985,22 +1105,22 @@ function renderSummary(filterKidId) {
       <div class="stat-card stat-happy">
         <div class="stat-icon">😊</div>
         <div class="stat-val">${stats.happy}</div>
-        <div class="stat-label">Happy (30d)</div>
+        <div class="stat-label">${t('stat_happy')}</div>
       </div>
       <div class="stat-card stat-sad">
         <div class="stat-icon">😢</div>
         <div class="stat-val">${stats.sad}</div>
-        <div class="stat-label">Sad (30d)</div>
+        <div class="stat-label">${t('stat_sad')}</div>
       </div>
       <div class="stat-card stat-rate">
         <div class="stat-icon">📊</div>
         <div class="stat-val">${rate}%</div>
-        <div class="stat-label">Happy Rate</div>
+        <div class="stat-label">${t('stat_rate')}</div>
       </div>
       <div class="stat-card stat-pending">
         <div class="stat-icon">⏳</div>
         <div class="stat-val">${todayPending}</div>
-        <div class="stat-label">Pending Today</div>
+        <div class="stat-label">${t('stat_pending')}</div>
       </div>
     </div>
 
@@ -1094,8 +1214,8 @@ function buildCompletionTable(kidId) {
     <tbody>
       ${rows.slice(0, 30).map(r => `<tr>
         <td>${fmtShortDate(r.date)}</td>
-        <td>${esc(r.act.title)}</td>
-        <td>${r.cat.icon} ${r.cat.label}</td>
+        <td>${esc(actTitle(r.act))}</td>
+        <td>${r.cat.icon} ${catLabel(r.cat)}</td>
         <td>${r.status === 'happy' ? '<span class="tag is-success">😊 Happy</span>'
           : r.status === 'sad' ? '<span class="tag is-danger">😢 Sad</span>'
           : '<span class="tag is-warning">⏳ Pending</span>'}</td>
@@ -1197,7 +1317,8 @@ function openKidForm(kidId) {
       Store.updateKid(kid.id, { name, emoji, color });
       UI.toast(`${emoji} ${name} updated!`, 'success');
     } else {
-      Store.addKid({ name, emoji, color });
+      const newKid = Store.addKid({ name, emoji, color });
+      addDefaultActivitiesForKid(newKid.id);
       AppAudio.playSuccess();
       UI.toast(`${emoji} ${name} added!`, 'success');
     }
@@ -1225,17 +1346,17 @@ function openActivityForm(preKidId, actId) {
   ).join('');
 
   const catOpts = Object.entries(CATEGORIES).map(([v, c]) =>
-    `<option value="${v}" ${(act?.category||'homework')===v ? 'selected' : ''}>${c.icon} ${c.label}</option>`
+    `<option value="${v}" ${(act?.category||'homework')===v ? 'selected' : ''}>${c.icon} ${catLabel(c)}</option>`
   ).join('');
 
   const recOpts = RECURRENCES.map(r =>
-    `<option value="${r.value}" ${(act?.recurrence||'daily')===r.value ? 'selected' : ''}>${r.label}</option>`
+    `<option value="${r.value}" ${(act?.recurrence||'daily')===r.value ? 'selected' : ''}>${recLabel(r)}</option>`
   ).join('');
 
   const wd = act?.weekDays || [1,3,5];
-  const dayChecks = DAY_SHORT.map((d, i) =>
+  const dayChecks = DAY_KEYS.map((dk, i) =>
     `<label class="weekday-check">
-      <input type="checkbox" class="wd-check" value="${i}" ${wd.includes(i)?'checked':''}> ${d}
+      <input type="checkbox" class="wd-check" value="${i}" ${wd.includes(i)?'checked':''}> ${t(dk)}
     </label>`).join('');
 
   const durMin = act?.timerDuration ? Math.floor(act.timerDuration / 60) : 10;
@@ -1527,9 +1648,9 @@ function openReminderForm(preKidId, remId) {
   ).join('');
 
   const wd = rem?.weekDays || [1,2,3,4,5];
-  const dayChecks = DAY_SHORT.map((d, i) =>
+  const dayChecks = DAY_KEYS.map((dk, i) =>
     `<label class="weekday-check">
-      <input type="checkbox" class="rem-wd-check" value="${i}" ${wd.includes(i)?'checked':''}> ${d}
+      <input type="checkbox" class="rem-wd-check" value="${i}" ${wd.includes(i)?'checked':''}> ${t(dk)}
     </label>`).join('');
 
   const td = today();
@@ -1676,6 +1797,25 @@ function setupDelegation() {
         break;
       }
 
+      case 'reset-faces': {
+        const ok = await UI.confirm('Clear all happy/sad faces for this kid?', 'Reset Faces');
+        if (!ok) break;
+        resetKidFaces(btn.dataset.kidId);
+        UI.toast('Faces reset to zero', 'warning');
+        Router.resolve();
+        break;
+      }
+
+      case 'reset-activities': {
+        const ok = await UI.confirm('Replace all activities with the 9 default ones? Current activities and history will be deleted.', 'Reset Activities');
+        if (!ok) break;
+        resetKidActivities(btn.dataset.kidId);
+        AppAudio.playSuccess();
+        UI.toast('Activities reset to defaults', 'info');
+        Router.resolve();
+        break;
+      }
+
       // ── Activities ────────────────────────────────────
       case 'open-activity-form':
         openActivityForm(btn.dataset.kidId);
@@ -1798,6 +1938,13 @@ function setupDelegation() {
 // ║             NAVBAR BURGER                            ║
 // ╚══════════════════════════════════════════════════════╝
 
+function setupLangToggle() {
+  const btn = document.getElementById('lang-toggle');
+  if (btn) btn.addEventListener('click', () => setLang(currentLang === 'en' ? 'es' : 'en'));
+  updateLangBtn();
+  applyI18n();
+}
+
 function setupNavbar() {
   const burger = document.getElementById('nav-burger');
   const menu   = document.getElementById('nav-menu');
@@ -1818,91 +1965,115 @@ function setupNavbar() {
 // ║             SAMPLE DATA                              ║
 // ╚══════════════════════════════════════════════════════╝
 
+// Default daily schedule — times in 24H (HH:MM), displayed as 12H
+// titleKey enables bilingual display without re-seeding
+const DEFAULT_SCHEDULE = [
+  { titleKey: 'act_wake_up',   category: 'other',     beginTime: '05:30', endTime: '06:30' },
+  { titleKey: 'act_breakfast', category: 'nutrition', beginTime: '06:30', endTime: '07:00' },
+  { titleKey: 'act_school',    category: 'homework',  beginTime: '07:00', endTime: '12:00' },
+  { titleKey: 'act_lunch',     category: 'nutrition', beginTime: '12:30', endTime: '13:30' },
+  { titleKey: 'act_rest',      category: 'other',     beginTime: '13:30', endTime: '15:00' },
+  { titleKey: 'act_study',     category: 'homework',  beginTime: '15:30', endTime: '16:00' },
+  { titleKey: 'act_play',      category: 'exercise',  beginTime: '16:00', endTime: '18:00' },
+  { titleKey: 'act_dinner',    category: 'nutrition', beginTime: '19:00', endTime: '20:00' },
+  { titleKey: 'act_bed',       category: 'other',     beginTime: '20:00', endTime: '20:30' },
+];
+
+function addDefaultActivitiesForKid(kidId) {
+  DEFAULT_SCHEDULE.forEach(sched => {
+    Store.addActivity({
+      kidId,
+      title: I18N.en[sched.titleKey],
+      titleKey: sched.titleKey,
+      category: sched.category,
+      beginTime: sched.beginTime,
+      endTime: sched.endTime,
+      startDate: today(), endDate: null,
+      recurrence: 'daily',
+      description: '', hasTimer: false, timerDuration: 0, weekDays: [],
+      completions: []
+    });
+  });
+}
+
+function resetKidFaces(kidId) {
+  Store.getKidActivities(kidId).forEach(a => {
+    Store.updateActivity(a.id, { completions: [] });
+  });
+}
+
+function resetKidActivities(kidId) {
+  // Remove all existing activities for this kid, then re-add defaults
+  Store.saveActivities(Store.getActivities().filter(a => a.kidId !== kidId));
+  addDefaultActivitiesForKid(kidId);
+}
+
 function seedSampleData() {
   if (Store.getKids().length > 0) return; // Already has data
 
-  const emma = Store.addKid({ name: 'Emma', emoji: '👧', color: '#FF6584' });
-  const jack = Store.addKid({ name: 'Jack', emoji: '👦', color: '#6C63FF' });
+  const isabel   = Store.addKid({ name: 'Isabel',   emoji: '👧', color: '#FF6584' });
+  const sebastian = Store.addKid({ name: 'Sebastian', emoji: '👦', color: '#6C63FF' });
 
   const td = today();
   const d = (offset) => {
-    const dt = new Date(); dt.setDate(dt.getDate() + offset);
-    return formatDate(dt);
+    const dt = new Date();
+    dt.setUTCDate(dt.getUTCDate() + offset);
+    return `${dt.getUTCFullYear()}-${String(dt.getUTCMonth()+1).padStart(2,'0')}-${String(dt.getUTCDate()).padStart(2,'0')}`;
   };
 
-  // Emma's activities
-  Store.addActivity({
-    kidId: emma.id, title: 'Read a Book', category: 'reading',
-    startDate: d(-14), endDate: d(30), recurrence: 'daily', description: 'Read for 20 minutes',
-    hasTimer: false, timerDuration: 0, weekDays: [], completions: [
-      { date: d(-1), status: 'happy', completedAt: new Date().toISOString() },
-      { date: d(-2), status: 'happy', completedAt: new Date().toISOString() },
-      { date: d(-3), status: 'sad',   completedAt: new Date().toISOString() },
-      { date: d(-4), status: 'happy', completedAt: new Date().toISOString() },
-      { date: d(-5), status: 'happy', completedAt: new Date().toISOString() },
-    ]
-  });
-  Store.addActivity({
-    kidId: emma.id, title: 'Do Homework', category: 'homework',
-    startDate: d(-14), endDate: d(30), recurrence: 'weekdays', description: '',
-    hasTimer: true, timerDuration: 1800, weekDays: [], completions: [
-      { date: d(-1), status: 'happy', completedAt: new Date().toISOString() },
-      { date: d(-2), status: 'happy', completedAt: new Date().toISOString() },
-      { date: d(-3), status: 'happy', completedAt: new Date().toISOString() },
-    ]
-  });
-  Store.addActivity({
-    kidId: emma.id, title: 'Tidy Bedroom', category: 'chores',
-    startDate: d(-7), endDate: d(30), recurrence: 'weekly', weekDays: [1, 4],
-    description: '', hasTimer: false, timerDuration: 0, completions: [
-      { date: d(-3), status: 'happy', completedAt: new Date().toISOString() },
-    ]
+  // Sample completions for the past 5 days (alternating happy/sad for realism)
+  const sampleCompletions = (pattern) =>
+    pattern.map((status, i) => ({
+      date: d(-(i + 1)), status, completedAt: new Date().toISOString()
+    }));
+
+  // Add all 9 default activities for Isabel
+  DEFAULT_SCHEDULE.forEach(sched => {
+    Store.addActivity({
+      kidId: isabel.id,
+      title: I18N.en[sched.titleKey],  // English fallback title stored
+      titleKey: sched.titleKey,         // enables bilingual display
+      category: sched.category,
+      beginTime: sched.beginTime,
+      endTime: sched.endTime,
+      startDate: d(-14), endDate: d(60),
+      recurrence: 'daily',
+      description: '', hasTimer: false, timerDuration: 0, weekDays: [],
+      completions: sampleCompletions(['happy','happy','sad','happy','happy'])
+    });
   });
 
-  // Jack's activities
-  Store.addActivity({
-    kidId: jack.id, title: 'Morning Exercise', category: 'exercise',
-    startDate: d(-14), endDate: d(30), recurrence: 'daily', description: '15 min workout',
-    hasTimer: true, timerDuration: 900, weekDays: [], completions: [
-      { date: d(-1), status: 'sad',   completedAt: new Date().toISOString() },
-      { date: d(-2), status: 'happy', completedAt: new Date().toISOString() },
-      { date: d(-3), status: 'happy', completedAt: new Date().toISOString() },
-      { date: d(-4), status: 'sad',   completedAt: new Date().toISOString() },
-      { date: d(-5), status: 'happy', completedAt: new Date().toISOString() },
-    ]
-  });
-  Store.addActivity({
-    kidId: jack.id, title: 'Practice Piano', category: 'music',
-    startDate: d(-7), endDate: d(30), recurrence: 'weekly', weekDays: [2, 4, 6],
-    description: '', hasTimer: false, timerDuration: 0, completions: [
-      { date: d(-2), status: 'happy', completedAt: new Date().toISOString() },
-    ]
-  });
-  Store.addActivity({
-    kidId: jack.id, title: 'Eat Vegetables', category: 'nutrition',
-    startDate: d(-14), endDate: d(30), recurrence: 'daily', description: '',
-    hasTimer: false, timerDuration: 0, weekDays: [], completions: [
-      { date: d(-1), status: 'happy', completedAt: new Date().toISOString() },
-      { date: d(-2), status: 'happy', completedAt: new Date().toISOString() },
-      { date: d(-3), status: 'sad',   completedAt: new Date().toISOString() },
-    ]
+  // Add all 9 default activities for Sebastian
+  DEFAULT_SCHEDULE.forEach(sched => {
+    Store.addActivity({
+      kidId: sebastian.id,
+      title: I18N.en[sched.titleKey],
+      titleKey: sched.titleKey,
+      category: sched.category,
+      beginTime: sched.beginTime,
+      endTime: sched.endTime,
+      startDate: d(-14), endDate: d(60),
+      recurrence: 'daily',
+      description: '', hasTimer: false, timerDuration: 0, weekDays: [],
+      completions: sampleCompletions(['happy','sad','happy','happy','sad'])
+    });
   });
 
   // Reminders
   Store.addReminder({
-    kidId: emma.id, title: 'Time for reading! 📚',
-    type: 'daily', time: '19:00', date: null, weekDays: [], enabled: true
+    kidId: isabel.id, title: '🛏️ Bed time!',
+    type: 'daily', time: '20:00', date: null, weekDays: [], enabled: true
   });
   Store.addReminder({
-    kidId: jack.id, title: 'Exercise time! 🏃',
-    type: 'daily', time: '07:30', date: null, weekDays: [], enabled: true
+    kidId: sebastian.id, title: '📚 Study time!',
+    type: 'daily', time: '15:30', date: null, weekDays: [], enabled: true
   });
 
-  // Sample timers
-  const t1 = Store.addTimer({ kidId: emma.id, label: 'Homework — Emma', duration: 1800, remaining: 1800 });
+  // Study timers
+  const t1 = Store.addTimer({ kidId: isabel.id,   label: 'Study — Isabel',   duration: 1800, remaining: 1800 });
   TimerEngine._remaining[t1.id] = 1800;
-  const t2 = Store.addTimer({ kidId: jack.id, label: 'Exercise — Jack', duration: 900, remaining: 900 });
-  TimerEngine._remaining[t2.id] = 900;
+  const t2 = Store.addTimer({ kidId: sebastian.id, label: 'Study — Sebastian', duration: 1800, remaining: 1800 });
+  TimerEngine._remaining[t2.id] = 1800;
 }
 
 // ╔══════════════════════════════════════════════════════╗
@@ -1929,6 +2100,7 @@ function setupRouter() {
 
 window.addEventListener('DOMContentLoaded', () => {
   setupNavbar();
+  setupLangToggle();
   setupDelegation();
   setupRouter();
   TimerEngine.init();

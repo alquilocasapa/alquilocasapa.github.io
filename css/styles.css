@@ -10,10 +10,10 @@
   --happy:     #48c774;
   --sad:       #f14668;
   --pending:   #ffdd57;
-  --bg:        #f4f6ff;
+  --bg:        #ffffff;
   --card-bg:   #ffffff;
-  --shadow:    0 4px 24px rgba(102,126,234,.12);
-  --shadow-sm: 0 2px 10px rgba(0,0,0,.08);
+  --shadow:    0 2px 16px rgba(102,126,234,.10);
+  --shadow-sm: 0 1px 6px rgba(0,0,0,.06);
   --radius:    12px;
   --radius-sm: 8px;
   --transition: all .2s ease;
@@ -23,10 +23,14 @@
 /* ── Base Reset ────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 body {
-  background: var(--bg);
+  background: #f7f8fc;
   font-family: var(--font);
   min-height: 100vh;
   color: #2d3748;
+}
+#page-content {
+  background: #ffffff;
+  min-height: calc(100vh - 58px);
 }
 .gap-2 { gap: .5rem; }
 .gap-3 { gap: .75rem; }
@@ -693,6 +697,26 @@ body {
 
 /* ── Notification Banner ───────────────────────────── */
 .hf-notif-banner { margin-bottom: 1rem; }
+
+/* ── Language Toggle ───────────────────────────────── */
+.hf-lang-btn {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 3px;
+  padding: .4rem .75rem !important;
+  border-radius: 20px !important;
+  margin-left: .25rem;
+  border: 1.5px solid rgba(255,255,255,.4) !important;
+  transition: var(--transition);
+  color: #fff !important;
+  font-weight: 600;
+  letter-spacing: .02em;
+  user-select: none;
+}
+.hf-lang-btn:hover {
+  background: rgba(255,255,255,.2) !important;
+  border-color: rgba(255,255,255,.7) !important;
+}
 
 /* ── Scrollbar ─────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
