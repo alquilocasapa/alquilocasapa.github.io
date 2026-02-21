@@ -1798,21 +1798,16 @@ function setupDelegation() {
       }
 
       case 'reset-faces': {
-        const ok = await UI.confirm('Clear all happy/sad faces for this kid?', 'Reset Faces');
-        if (!ok) break;
+        if (!window.confirm('Clear all happy/sad faces for this kid?')) break;
         resetKidFaces(btn.dataset.kidId);
-        UI.toast('Faces reset to zero', 'warning');
-        Router.resolve();
+        location.reload();
         break;
       }
 
       case 'reset-activities': {
-        const ok = await UI.confirm('Replace all activities with the 9 default ones? Current activities and history will be deleted.', 'Reset Activities');
-        if (!ok) break;
+        if (!window.confirm('Replace all activities with the 9 default ones?\nCurrent activities and history will be deleted.')) break;
         resetKidActivities(btn.dataset.kidId);
-        AppAudio.playSuccess();
-        UI.toast('Activities reset to defaults', 'info');
-        Router.resolve();
+        location.reload();
         break;
       }
 
