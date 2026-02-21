@@ -156,7 +156,7 @@ function formatDate(d) {
 
 function today() {
   const n = new Date();
-  return `${n.getUTCFullYear()}-${String(n.getUTCMonth()+1).padStart(2,'0')}-${String(n.getUTCDate()).padStart(2,'0')}`;
+  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
 }
 
 function fmtDisplay(dateStr) {
@@ -202,7 +202,7 @@ function fmtShortDate(dateStr) {
 }
 
 function greeting() {
-  const h = new Date().getUTCHours();
+  const h = new Date().getHours();
   if (h < 12) return t('good_morning');
   if (h < 17) return t('good_afternoon');
   return t('good_evening');
@@ -1968,15 +1968,15 @@ function setupNavbar() {
 // Default daily schedule — times in 24H (HH:MM), displayed as 12H
 // titleKey enables bilingual display without re-seeding
 const DEFAULT_SCHEDULE = [
-  { titleKey: 'act_wake_up',   category: 'other',     beginTime: '05:30', endTime: '06:30' },
-  { titleKey: 'act_breakfast', category: 'nutrition', beginTime: '06:30', endTime: '07:00' },
-  { titleKey: 'act_school',    category: 'homework',  beginTime: '07:00', endTime: '12:00' },
-  { titleKey: 'act_lunch',     category: 'nutrition', beginTime: '12:30', endTime: '13:30' },
-  { titleKey: 'act_rest',      category: 'other',     beginTime: '13:30', endTime: '15:00' },
-  { titleKey: 'act_study',     category: 'homework',  beginTime: '15:30', endTime: '16:00' },
-  { titleKey: 'act_play',      category: 'exercise',  beginTime: '16:00', endTime: '18:00' },
-  { titleKey: 'act_dinner',    category: 'nutrition', beginTime: '19:00', endTime: '20:00' },
-  { titleKey: 'act_bed',       category: 'other',     beginTime: '20:00', endTime: '20:30' },
+  { titleKey: 'act_wake_up',   category: 'other',     beginTime: '05:30', endTime: '06:30', recurrence: 'weekdays', weekDays: [] },
+  { titleKey: 'act_breakfast', category: 'nutrition', beginTime: '06:30', endTime: '07:00', recurrence: 'weekdays', weekDays: [] },
+  { titleKey: 'act_school',    category: 'homework',  beginTime: '07:00', endTime: '12:00', recurrence: 'weekdays', weekDays: [] },
+  { titleKey: 'act_lunch',     category: 'nutrition', beginTime: '12:30', endTime: '13:30', recurrence: 'weekdays', weekDays: [] },
+  { titleKey: 'act_rest',      category: 'other',     beginTime: '13:30', endTime: '15:00', recurrence: 'weekly',   weekDays: [0,1,2,3,4,5,6] },
+  { titleKey: 'act_study',     category: 'homework',  beginTime: '15:30', endTime: '16:00', recurrence: 'weekly',   weekDays: [0,1,2,3,4,5,6] },
+  { titleKey: 'act_play',      category: 'exercise',  beginTime: '16:00', endTime: '18:00', recurrence: 'weekdays', weekDays: [] },
+  { titleKey: 'act_dinner',    category: 'nutrition', beginTime: '19:00', endTime: '20:00', recurrence: 'weekdays', weekDays: [] },
+  { titleKey: 'act_bed',       category: 'other',     beginTime: '20:00', endTime: '20:30', recurrence: 'weekly',   weekDays: [0,1,2,3,5,6] },
 ];
 
 function addDefaultActivitiesForKid(kidId) {
@@ -1989,8 +1989,8 @@ function addDefaultActivitiesForKid(kidId) {
       beginTime: sched.beginTime,
       endTime: sched.endTime,
       startDate: today(), endDate: null,
-      recurrence: 'daily',
-      description: '', hasTimer: false, timerDuration: 0, weekDays: [],
+      recurrence: sched.recurrence,
+      description: '', hasTimer: false, timerDuration: 0, weekDays: sched.weekDays,
       completions: []
     });
   });
@@ -2037,8 +2037,8 @@ function seedSampleData() {
       beginTime: sched.beginTime,
       endTime: sched.endTime,
       startDate: d(-14), endDate: d(60),
-      recurrence: 'daily',
-      description: '', hasTimer: false, timerDuration: 0, weekDays: [],
+      recurrence: sched.recurrence,
+      description: '', hasTimer: false, timerDuration: 0, weekDays: sched.weekDays,
       completions: sampleCompletions(['happy','happy','sad','happy','happy'])
     });
   });
@@ -2053,8 +2053,8 @@ function seedSampleData() {
       beginTime: sched.beginTime,
       endTime: sched.endTime,
       startDate: d(-14), endDate: d(60),
-      recurrence: 'daily',
-      description: '', hasTimer: false, timerDuration: 0, weekDays: [],
+      recurrence: sched.recurrence,
+      description: '', hasTimer: false, timerDuration: 0, weekDays: sched.weekDays,
       completions: sampleCompletions(['happy','sad','happy','happy','sad'])
     });
   });
