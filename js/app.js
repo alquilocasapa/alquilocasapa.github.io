@@ -2098,6 +2098,14 @@ function setupRouter() {
 // ║             INITIALIZATION                           ║
 // ╚══════════════════════════════════════════════════════╝
 
+function migrateData() {
+  // v1→v2: rename old default kid names
+  Store.getKids().forEach(k => {
+    if (k.name === 'Emma') Store.updateKid(k.id, { name: 'Isabel',   emoji: '👧', color: '#FF6584' });
+    if (k.name === 'Jack') Store.updateKid(k.id, { name: 'Sebastian', emoji: '👦', color: '#6C63FF' });
+  });
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   setupNavbar();
   setupLangToggle();
@@ -2105,6 +2113,7 @@ window.addEventListener('DOMContentLoaded', () => {
   setupRouter();
   TimerEngine.init();
   ReminderEngine.init();
+  migrateData();
   seedSampleData();
   Router.init();
 });

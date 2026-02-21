@@ -2,7 +2,7 @@
    HappyFamily – Service Worker (Cache-First Strategy)
    ===================================================== */
 
-const CACHE = 'happyfamily-v2';
+const CACHE = 'happyfamily-v3';
 const PRECACHE = [
   './',
   './index.html',
